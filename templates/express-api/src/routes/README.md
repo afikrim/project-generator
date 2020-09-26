@@ -1,0 +1,1 @@
+**This folder is use to assign controllers and middlewares as application routes**

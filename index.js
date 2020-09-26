@@ -12,7 +12,7 @@ const QUESTIONS = [
             name: 'project-choice',
             type: 'list',
             message: 'What project templates that you want to use?',
-            choice: TEMPLATES,
+            choices: TEMPLATES,
         },
         {
             name: 'project-name',
@@ -44,16 +44,12 @@ const QUESTIONS = [
             type: 'input',
             message: 'Project repository: ',
             default: '',
-            validate: (input) => {
-                if (/[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&=]*)/.test(input)) return true;
-                else return 'Project repository must type of url';
-            },
         },
         {
             name: 'project-package-manager',
             type: 'list',
             message: 'What package manager you want to use?',
-            choice: ['npm', 'yarn'],
+            choices: ['npm', 'yarn'],
             default: 'npm',
         },
     ]
@@ -69,13 +65,15 @@ const createDirectoryContents = (templatePath, projectPath) => {
         if (stats.isFile()) {
             const content = fs.readFileSync(originFilePath);
 
+            if (filePath === '.env.example') filePath = '.env';
+
             const writePath = path.join(projectPath, filePath);
             fs.writeFileSync(writePath, content, 'utf-8');
         } else if (stats.isDirectory()) {
             const childTemplatePath = path.join(templatePath, filePath);
             const childProjectPath = path.join(projectPath, filePath);
 
-            fs.mkdirSync(childPath);
+            fs.mkdirSync(childProjectPath);
 
             createDirectoryContents(childTemplatePath, childProjectPath);
         }
@@ -85,7 +83,7 @@ const createDirectoryContents = (templatePath, projectPath) => {
 const initProject = (projectName, projectDescription, projectVersion, projectRepository, projectPackageManager) => {
     const projectPath = path.join(CURR_DIR, projectName);
     const packageJsonPath = path.join(projectPath, 'package.json');
-    const readmeMdPath = path.join(projectPath, 'readme.md');
+    const readmeMdPath = path.join(projectPath, 'README.md');
 
     const packageJson = fs.readFileSync(packageJsonPath, 'utf-8');
     const readmeMd = fs.readFileSync(readmeMdPath, 'utf-8');
@@ -97,54 +95,28 @@ const initProject = (projectName, projectDescription, projectVersion, projectRep
     readmeMd.replace('{{ name }}', projectName);
     readmeMd.replace('{{ description }}', projectDescription);
 
-    if (projectRepository) {
-        childProcess.exec('git init', {cwd: projectPath}, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`error: ${error}`);
-                return;
-            }
-            if (stdout) console.log(stdout);
-            if (stderr) console.log(stderr);
-        })
+    let commands = '';
 
-        childProcess.exec(`git remote add origin ${projectRepository}`, {cwd: projectPath}, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`error: ${error}`);
-                return;
-            }
-            if (stdout) console.log(stdout);
-            if (stderr) console.log(stderr);
-        })
+    commands += 'git init;';
+    commands += 'git add .gitignore README.md;';
+    commands += 'git commit -m "Initial Commit";';
 
-        childProcess.exec('git add .gitignore README.md; git commit -m "Initial Commit"', {cwd: projectPath}, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`error: ${error}`);
-                return;
-            }
-            if (stdout) console.log(stdout);
-            if (stderr) console.log(stderr);
-        })
-    }
+    if (projectRepository) commands += `git remote add origin ${projectRepository};`;
 
     if (projectPackageManager == 'npm') {
-        childProcess.exec('npm install', {cwd: projectPath}, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`error: ${error}`);
-                return;
-            }
-            if (stdout) console.log(stdout);
-            if (stderr) console.log(stderr);
-        })
+        commands += 'npm install;';
     } else if (projectPackageManager == 'yarn') {
-        childProcess.exec('yarn', {cwd: projectPath}, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`error: ${error}`);
-                return;
-            }
-            if (stdout) console.log(stdout);
-            if (stderr) console.log(stderr);
-        })
+        commands += 'yarn;';
     }
+
+    childProcess.exec(commands, {cwd: projectPath}, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`error: ${error}`);
+            return;
+        }
+        if (stdout) console.log(stdout);
+        if (stderr) console.log(stderr);
+    })
 }
 
 inquirer.prompt(QUESTIONS)

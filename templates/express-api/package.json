@@ -1,7 +1,7 @@
 {
-  "name": "name",
+  "name": "{{ name }}",
   "description": "{{ description }}",
-  "version": "0.0.0",
+  "version": "{{ version }}",
   "main": "index.js",
   "license": "MIT",
   "scripts": {

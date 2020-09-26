@@ -85,15 +85,18 @@ const initProject = (projectName, projectDescription, projectVersion, projectRep
     const packageJsonPath = path.join(projectPath, 'package.json');
     const readmeMdPath = path.join(projectPath, 'README.md');
 
-    const packageJson = fs.readFileSync(packageJsonPath, 'utf-8');
-    const readmeMd = fs.readFileSync(readmeMdPath, 'utf-8');
+    let packageJson = fs.readFileSync(packageJsonPath, 'utf-8');
+    let readmeMd = fs.readFileSync(readmeMdPath, 'utf-8');
 
-    packageJson.replace('{{ name }}', projectName);
-    packageJson.replace('{{ description }}', projectDescription);
-    packageJson.replace('{{ version }}', projectVersion);
+    packageJson = packageJson.replace('{{ name }}', projectName.toLowerCase());
+    packageJson = packageJson.replace('{{ description }}', projectDescription);
+    packageJson = packageJson.replace('{{ version }}', projectVersion);
 
-    readmeMd.replace('{{ name }}', projectName);
-    readmeMd.replace('{{ description }}', projectDescription);
+    readmeMd = readmeMd.replace('{{ name }}', projectName);
+    readmeMd = readmeMd.replace('{{ description }}', projectDescription);
+
+    fs.writeFileSync(packageJsonPath, packageJson, 'utf-8');
+    fs.writeFileSync(readmeMdPath, readmeMd, 'utf-8');
 
     let commands = '';
 

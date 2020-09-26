@@ -1,0 +1,28 @@
+{
+  "name": "project-generator",
+  "version": "0.0.0",
+  "description": "Project generator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/afikrim/project-generator.git"
+  },
+  "keywords": [
+    "express",
+    "rest",
+    "api",
+    "mvc",
+    "vue",
+    "hbs",
+    "generator"
+  ],
+  "author": "Aziz Fikri <afikrim10@student.ub.ac.id>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/afikrim/project-generator/issues"
+  },
+  "homepage": "https://github.com/afikrim/project-generator#readme"
+}

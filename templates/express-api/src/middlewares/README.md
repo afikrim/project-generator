@@ -1,0 +1,1 @@
+**This folder is use to create middlewares, look at routes to know how to assign middleware**
